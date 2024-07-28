@@ -22,30 +22,64 @@ The data came from UCDavic in the year...
 
 $H_0$: There is no difference between the average number of drinks imbibed between people conditioned on the row they sit in.  
 
-$H_A$: The average number drinks is different between at least two rows.  
+$H_A$: The average number drinks is different between at least two rows.   
 
-## Now with ggplot - first select the basic data
+# Methods:
+
+In the data set davisdata Seat is a categorical variable, alcohol is numerical.
+
+We try to predict alcohol ~ Seat so we use the num~cat helper file.  
+
+## Results
+
+
+### Descriptive Results
+
+
+### Graphical summary
 
 ```{r}
 basicCN <- ggplot(davisdata,aes(y=alcohol,x=Seat))
 ```
-## Now add in boxplot
+
+Now add a boxplot
 
 ```{r}
 basicCN + geom_boxplot()
 ```
-  
-  
-### get fancy  
+
+This boxplot shows that the back seat has the most variation in alcohol levels, while the front seat has the least.  
+
+### Numerical summary
 
 ```{r}
-basicCN + geom_boxplot(notch=TRUE,outlier.color = "red") + stat_boxplot(geom ='errorbar') + labs(title="Fancy notch boxplot \n with 2 lines")
+favstats(alcohol~Seat,data=ucdavis1)
 ```
 
-## Numerical Summarys 
+The numerical summary shows
+In the back seat, alcohol levels range from 0 to 55, with a typical value around 3.5 and an average of 8.56  
+In the fron seat, alcohol levels range from 0 to 35, with a typical value around 1 and an average of 3.33  
 
-## Inferential Tests
+
+### Inferential Results
+
+```{r}
+model1 <- aov(alcohol~Seat,data=davisdata)
+summary.aov(model1)
+```
+
+The p-value is 0.000116, less than 0.05 so we reject the null hypothesis.  
+There is a difference in alcohol consumption based on where people sit.  
+
+
+```{r}
+plot(TukeyHSD(model1))
+```
+
+This shows that the middle-bakc consume more alcohol than middle-front.  
 
 ## Conclusions
 
-
+The seats in the back have a higher average of people consuming alcohol than those in the front or middle seats. The Tukey plot shows that the chances of the seat positions have a low probability of the alcohol levels between the different seat positions.  
+The seats in the back have a higher average of people consuming alcohol than those in the front of middle seats. Since the p-value is 0.000116, less than 0.005 so we reject the null hypothesis.
+The tukey plot shows that there is a difference in alcohol consumption based on where people sit.
